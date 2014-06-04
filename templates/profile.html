@@ -1,0 +1,203 @@
+{{header|safe}}
+{{toolbar|safe}}
+<div class="btn-group btn-group-justified">
+  <a role="button" class="btn btn-default" onclick=others();><h4 style="font-size:16px;">My Reviews</h4></a>
+  <a role="button" class="btn btn-default" onclick=me();><h4 style="font-size:16px;">Reviews About Me</h4></a>
+</div>
+
+
+<div class="container" id="me">
+    <div class="row well well-sm">
+           <div class='col-md-3 col-xs-10 col-md-offset-1 col-xs-offset-2'>
+                <img class="icon img-rounded" src="https://graph.facebook.com/{{user_dict['username']}}/picture?type=large">
+           </div>
+
+
+           <div class="col-md-4 col-xs-6">
+              <h2>Info</h2>
+              <p class="lead"><span class="label label-primary">Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> {{user_dict['name']}}</p>
+              <p class="lead"><span class="label label-primary">Username:</span> {{user_dict['username']}}</p>
+              <p class="lead"><span class="label label-primary">ID:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> {{user_dict['userid']}}</p>
+           </div>
+           <div class='col-md-4 col-xs-6'>
+              <h2>Ratings</h2>
+
+              <p class="lead"><span class="label label-primary">Timeliness:</span>
+                  {% if ratings['timeliness']=='None'%}
+                  {{ratings['timeliness']}}
+                  {% else %}
+                  <span id="timeliness_label">{{ratings['timeliness']}}%</span>
+                  {%endif%}
+              </p>
+
+              <p class="lead"><span class="label label-primary">Honesty:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  {% if ratings['honesty']=='None'%}
+                  {{ratings['honesty']}}
+                  {% else %}
+                  <span id="honesty_label"> {{ratings['honesty']}}%</span></p>
+                  {%endif%}
+              <p class="lead"><span class="label label-primary">Reliability:&nbsp;&nbsp;</span>
+                  {% if ratings['reliability']=='None'%}
+                  {{ratings['reliability']}}
+                  {% else %}
+                  <span id="reliability_label"> {{ratings['reliability']}}%</span>
+                  {% endif %}
+              </p>
+                </div>
+
+
+    </div>
+
+    <h3>Reviews About Me <hr></h3>
+
+
+
+{%for review in reviews%}
+
+       <div class="row well well-lg">
+                 <div class="col-md-2 col-xs-10 col-md-offset-0 col-xs-offset-2">
+                     <img class="review_icon img-rounded" src = http://graph.facebook.com/{{review['reviewer_id']}}/picture?type=large>
+                 </div>
+                 <div class="col-md-3 col-xs-12">
+                     <a href="/user?query={{review['reviewer_id']}}">
+                        <b>Reviewer Name: {{review['reviewer_name']}}</b>
+                     </a>
+                         <br><br>
+                     <p>Timeliness: {% for i in range(1+review['timeliness']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['timeliness']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                     <p>Honesty: &nbsp;&nbsp;&nbsp;{% for i in range(1+review['honesty']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['honesty']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                     <p>Reliability: &nbsp; {% for i in range(1+review['reliability']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['reliability']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                 </div>
+               <div class="col-md-7 col-xs-12">
+                 {%if review['com']%}
+                     <b>Comments:</b>
+                     <div class="panel panel-default commentframe">
+                        <div class="panel-body">
+                            {{review['com']}}
+                        </div>
+                     </div>
+                 {%endif%}
+                    <small style="align:right">Date Added: {{review['created']}}</small>
+               </div>
+           </div>
+
+{% endfor %}
+
+</div>
+
+
+
+
+<div id="others" class="container">
+<h3>
+    My Reviews
+</h3>
+
+{%for review in my_reviews%}
+     <div class="row well well-lg">
+
+                 <div class="col-md-2 col-xs-10 col-xs-offset-2 col-md-offset-0">
+                     <img class="review_icon img-rounded" src = http://graph.facebook.com/{{review['reviewed_id']}}/picture?type=large>
+                 </div>
+                 <div class="col-md-3 col-xs-12">
+                     <b><a href="/user?query={{review['reviewed_id']}}"> Name: {{review['reviewed_name']}}</a></b><br><br>
+
+                     <p>Timeliness: {% for i in range(1+review['timeliness']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['timeliness']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                     <p>Honesty: &nbsp;&nbsp;&nbsp;{% for i in range(1+review['honesty']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['honesty']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                     <p>Reliability: &nbsp; {% for i in range(1+review['reliability']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['reliability']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                 </div>
+                 {%if review['com']%}
+                 <div class="col-md-7 col-xs-12">
+                     <b>Comments:</b>
+                     <div class="panel panel-default commentframe">
+                        <div class="panel-body">
+                            {{review['com']}}
+                        </div>
+                     </div>
+                     <small>Date Added: {{review['created']}}</small>
+                 </div>
+                 {%endif%}
+      </div>
+{% endfor %}
+
+</div>
+
+<script>
+    $('#reviewbutton').css('visibility','hidden')
+</script>
+{%if ratings['exist']==True%}
+<script>
+    if({{ratings['timeliness']}}<=50){
+        $('#timeliness_label').css('color','red')
+    }
+    else if({{ratings['timeliness']|float()*25}}>=80){
+        $('#timeliness_label').css('color','green')
+    }
+
+
+    if({{ratings['honesty']}}<=50){
+        $('#honesty_label').css('color','red')
+    }
+    else if({{ratings['honesty']}}>=80){
+        $('#honesty_label').css('color','green')
+    }
+
+    if({{ratings['reliability']}}<=50){
+        $('#reliability_label').css('color','red')
+    }
+    else if({{ratings['reliability']}}>=80){
+        $('#reliability_label').css('color','green')
+    }
+</script>
+{%endif%}
+<script>
+    $('#others').hide();
+
+    function me(){
+    $('#me').show();
+    $('#others').hide();
+    };
+
+    function others(){
+    $('#others').show();
+    $('#me').hide();
+    };
+</script>
+{{footer|safe}}
+
+

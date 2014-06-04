@@ -1,0 +1,58 @@
+{{header|safe}}
+<div id="fb-root"></div>
+<script>
+var cookies = document.cookie.split(";");
+for (var i = 0; i < cookies.length; i++)
+  eraseCookie(cookies[i].split("=")[0]);
+</script>
+<script>
+  window.fbAsyncInit = function(id_var) {
+  FB.init({
+    appId      : 538470186266511,
+    status     : false, // check login status
+    cookie     : true, // enable cookies to allow the server to access the session
+    xfbml      : true,  // parse XFBML
+    });
+
+
+logout();
+
+
+function logout()
+{
+
+
+    FB.getLoginStatus(function(response)
+    {
+        if (response && response.status === 'connected')
+        {
+            FB.logout(function(response)
+            {
+                document.location.reload();
+            })
+
+        }
+        else{
+        window.location.replace("/login");
+        }
+    });
+
+};
+
+
+
+
+
+    };
+
+  // Load the SDK asynchronously
+  (function(d){
+   var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement('script'); js.id = id; js.async = true;
+   js.src = "http://connect.facebook.net/en_US/all.js";
+   ref.parentNode.insertBefore(js, ref);
+  }(document));
+</script>
+
+{{footer|safe}}

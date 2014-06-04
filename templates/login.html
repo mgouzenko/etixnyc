@@ -1,0 +1,95 @@
+
+{{header|safe}}
+<div id="fb-root"></div>
+<script>
+  window.fbAsyncInit = function(id_var) {
+  FB.init({
+    appId      : 538470186266511,
+    status     : false, // check login status
+    cookie     : true, // enable cookies to allow the server to access the session
+    xfbml      : true,  // parse XFBML
+    });
+
+  FB.getLoginStatus(function(response){
+    if (response.status === 'connected') {
+        set_cookie(response);
+        };
+    });
+};
+
+
+
+
+  // Load the SDK asynchronously
+  (function(d){
+   var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement('script'); js.id = id; js.async = true;
+   js.src = "http://connect.facebook.net/en_US/all.js";
+   ref.parentNode.insertBefore(js, ref);
+  }(document));
+
+
+function set_cookie(response) {
+        date  = new Date();
+        year = date.getFullYear()+1;
+        date.setFullYear(year);
+        document.cookie="access_token="+response.authResponse.accessToken+";path=/;expires="+date;
+        document.cookie="user_id ="+response.authResponse.userID+";path=/;expires="+date;
+        document.cookie="has_just_logged=True";
+        window.location.replace("/");
+        };
+
+function login(){
+    FB.login(function(response){
+        set_cookie(response);
+    })
+}
+</script>
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div>
+       <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="https://www.facebook.com/groups/buyingandsellingraveticketsnyc/">Know Your Seller</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <h2>Introducing a way to stop scammers...</h2>
+        <p>This is a site designed for users to rate sellers of EDM tickets.
+            Write reviews about your transactions and run background checks on ticket sellers & promoters!
+        </p>
+
+        <ul>
+                <li>
+                    To look up a seller, copy the url to their Facebook page and paste it in the search bar.
+                </li>
+                <li>If you've ever had a great experience with someone, write a nice review. We want the good
+                    sellers to be rewarded for their honesty and professionalism.
+                </li>
+                <li>
+                    If someone has ever stolen your money or given you fake tickets, let the world know!
+                </li>
+                <li>
+                    To change your review about someone, simply review them again. Only your last review will count.
+                </li>
+        </ul>
+        <p>
+            <button type="button" id="loginbutton" class="btn btn-primary" data-toggle="button" onclick=login()><h4>Facebook Login</h4></button>
+        </p>
+      </div>
+</div> <!-- /container -->
+<div align="center">
+</div>
+
+
+{{footer|safe}}

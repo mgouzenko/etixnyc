@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+    <script type="text/javascript">
+function search()
+{
+
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+xmlhttp.open("GET","http://localhost:8080",true);
+xmlhttp.send();
+
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+        if(xmlhttp.status==200){
+            document.getElementById("search1").innerHTML=xmlhttp.responseText;
+        }
+    }
+  }
+
+    document.getElementById("search").innerHTML=xmlhttp.status;
+
+
+}
+</script>
+
+
+</head>
+<body>
+   {{search_string}}
+
+<br><br>
+
+    <div id="search"></div>
+    <div id="search1"></div>
+
+    <button onclick="search()">Search</button>
+</body>
+</html>

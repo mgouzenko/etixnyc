@@ -1,0 +1,83 @@
+
+.help:hover{
+font-weight:bold;
+text-decoration:none;
+
+}
+
+.thanks{
+padding:5px 5px 5px 5px
+}
+
+body {
+  padding-top: 50px;
+}
+
+div {
+ border: 0px black solid;
+}
+
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+
+.icon
+{
+        max-width: 200px;
+        min-width:130px;
+}
+
+.review_icon
+{
+       max-height: 100px;
+       max-width: 100px;
+}
+
+.review_icon_style2
+{
+       max-height: 150px
+}
+
+#reviewbutton
+{
+padding:20px 20px;
+}
+
+
+#com{
+height:150px;
+min-height:150px;
+max-height:150px;
+}
+
+
+#error{
+color:red
+}
+
+.commentframe{
+       min-height:115px;
+       min-width:620px
+       max-width:620px
+}
+
+.sticky{
+position:fixed;
+z-index:99;
+}
+
+.bar{
+width:10%
+}
+
+.ratingbox
+{
+min-width:220px
+}
+
+.doublepropics
+{
+min-width:330px
+}

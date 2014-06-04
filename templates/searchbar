@@ -1,0 +1,37 @@
+<form action="/user" method="get">
+    <div class="input-group input-group-lg sticky">
+         <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span> </span>
+         <input type="text" name="query" class="form-control" placeholder="Paste link to seller's Facebook page.">
+         <span class="input-group-addon">
+
+             <a href="" class="help" data-toggle="modal" data-target="#myModal1">
+                Help?
+             </a>
+         </span>
+         <input type="submit" style="display:none"/>
+    </div>
+</form>
+
+
+        <!-- Modal -->
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">How to Search</h4>
+      </div>
+      <div class="modal-body">
+        <h4>Step 1:</h4>
+          <p> Go to the seller's Facebook page and copy the link.</p>
+           <img class="demopic img-rounded" style="max-width:500px; border: 1px black solid;" src="/stylesheets/tiesto.png"> <br><br>
+        <h4>Step 2:</h4>
+           <p> Paste the link into our search engine & hit enter.</p>
+           <img style="max-width:500px; border: 1px black solid;" src="/stylesheets/tiestosearch.png"><br>
+         <h4>Step 3:</h4>
+           <p>Use our database to post reviews and background check sellers!</p>
+           <img style="max-width:500px; border: 1px black solid;" src="/stylesheets/tiestopost.png"><br>
+      </div>
+    </div>
+  </div>
+</div>

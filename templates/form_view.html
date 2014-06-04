@@ -1,0 +1,12 @@
+{{Header|safe}}
+
+{% for r in Reviews %}
+       name = {{r.reviewed_id}}<br>
+       created = {{r.created}}<br>
+       honesty = {{r.honesty}} <br>
+       reliability = {{r.reliability}}<br>
+       com = {{r.com}}<br>
+       reviewer = {{r.reviewer_id}}<br><br><br>
+{%endfor%}
+
+{{Footer|safe}}

@@ -1,0 +1,25 @@
+<!Doctype HTML>
+
+<html>
+<head>
+    <title>Know Your Seller</title>
+
+    <!-- META -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- -->
+
+
+    <!-- LINKS -->
+        <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="/stylesheets/style.css"/>
+    <!-- -->
+
+    <!-- SCRIPT -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <!-- -->
+
+
+
+
+</head>
+<body>

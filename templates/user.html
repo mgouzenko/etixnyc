@@ -1,0 +1,257 @@
+{{header|safe}}
+{{toolbar|safe}}
+{{searchbar|safe}}
+<!--Header-->
+{%if user_dict!=False%}
+<br>
+<div class="container well well-lg">
+    <div class="row">
+           <div class='col-md-3 col-xs-10 col-xs-offset-2 col-md-offset-0'>
+                <br>
+                <img class="icon img-rounded" src="https://graph.facebook.com/{{user_dict['userid']}}/picture?type=large">
+           </div>
+
+           <div class='col-md-3 col-xs-6'>
+              <h2>Info</h2>
+              <p class="lead"><span class="label label-primary">Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> {{user_dict['name']}}</p>
+              <p class="lead"><span class="label label-primary">Username:</span> {{user_dict['username']}}</p>
+              <p class="lead"><span class="label label-primary">ID:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> {{user_dict['userid']}}</p>
+           </div>
+           <div class='col-md-3 col-xs-6'>
+              <h2>Ratings</h2>
+
+              <p class="lead"><span class="label label-primary">Timeliness:</span>
+                  {% if ratings['timeliness']=='None'%}
+                  {{ratings['timeliness']}}
+                  {% else %}
+                  <span id="timeliness_label">{{ratings['timeliness']}}%</span>
+                  {%endif%}
+              </p>
+
+              <p class="lead"><span class="label label-primary">Honesty:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  {% if ratings['honesty']=='None'%}
+                  {{ratings['honesty']}}
+                  {% else %}
+                  <span id="honesty_label"> {{ratings['honesty']}}%</span></p>
+                  {%endif%}
+              <p class="lead"><span class="label label-primary">Reliability:&nbsp;&nbsp;</span>
+                  {% if ratings['reliability']=='None'%}
+                  {{ratings['reliability']}}
+                  {% else %}
+                  <span id="reliability_label"> {{ratings['reliability']}}%</span>
+                  {% endif %}
+              </p>
+           </div>
+
+           <div class='col-md-3 col-xs-7 col-xs-offset-3 col-md-offset-0'>
+                <br>
+                <br>
+                <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" id="reviewbutton">
+                      Write a Review
+                </button>
+                {%if thanks == 'true'%}
+                <br>
+                <br>
+                <div class="thanks alert alert-success"><h5>Thanks for your review!</h5></div>
+                {%endif%}
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                       <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="myModalLabel">Write a review for {{user_dict['name']}}</h4>
+                            </div>
+
+
+
+
+<!-- Body of the modal -->
+<div class="modal-body">
+     <form method="post" action = "../form_submit" name="review_form">
+
+
+            <div class="page-header">
+                <h3>Timeliness <p><small>Was the person there when you expected, or did you have
+                    to wait for them? Did it take a long time for them
+                    to respond to your texts?</small></p></h3>
+                <h2><input name="timeliness" type="number" data-max="4" data-min="0" class="rating" id="timeliness"/></h2>
+            </div>
+
+
+            <div class="page-header">
+                <h3>Reliability <p><small> Did the user deliver the product as promised, or did they flake last minute?
+                    Did they charge you more than the price they promised you?</small></p></h3>
+                <h2><input name="reliability" type="number" data-max="4" data-min="0" class="rating" id="reliability"/></h2>
+            </div>
+
+
+
+            <div class="page-header">
+                <h3>Honesty <p><small> Did you end up with a REAL ticket?
+                    If there was a problem with the ticket, did the seller refund you or did they change their name
+                    and block you on facebook?</small></p></h3>
+                <h2><input name="honesty" type="number" data-max="4" data-min="0" class="rating" id="honesty"/></h2>
+            </div>
+
+
+            <div class="page-header">
+                <h3>Comments <p><small> Please write about how your transaction went.</small></p></h3>
+                <textarea rows = "4" name="com" id="com" class="form-control"></textarea>
+            </div>
+            <div id="error" style="font-color:red">
+                <h3>Error: Fill out all areas of the review.</h3>
+            </div>
+    <!-- Additional hidden info-->
+    <input class="hidden" name="userid" value="{{user_dict['userid']}}">
+    <input class="hidden" name="reviewed_name" value="{{user_dict['name']}}">
+    </form>
+</div>
+<!-- End body of modal-->
+<!--Begin footer of the modal-->
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" onclick=submit_form()>Submit Review</button>
+</div>
+
+
+</div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+    </div>
+
+  </div>
+</div>
+{%endif%}
+<!--End Header-->
+
+
+
+{%if does_query_exist==True%}
+
+<div class="container"><h2>Reviews</h2><hr></div>
+<div class="container">
+{%for review in reviews%}
+
+           <div class="row well well-lg">
+                 <div class="col-md-3 col-md-offset-0 col-xs-10 col-xs-offset-2">
+                     <img class="review_icon_style2 img-rounded" src = http://graph.facebook.com/{{review['reviewer_id']}}/picture?type=large>
+                 </div>
+                 <div class="col-md-3">
+                     <a href="/user?query={{review['reviewer_id']}}">
+                         <b>Reviewer Name: {{review['reviewer_name']}}</b><br><br>
+                     </a>
+                     <p>Timeliness: {% for i in range(1+review['timeliness']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['timeliness']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                     <p>Honesty: &nbsp;&nbsp;&nbsp;{% for i in range(1+review['honesty']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['honesty']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                     <p>Reliability: &nbsp; {% for i in range(1+review['reliability']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['reliability']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                 </div>
+                 {%if review['com']%}
+                 <div class="col-md-6">
+                     <b>Comments:</b>
+                     <div class="panel panel-default commentframe">
+                        <div class="panel-body">
+                            {{review['com']}}
+                        </div>
+                     </div>
+                     <small>Date Added: {{review['created']}}</small>
+                 </div>
+                 {%endif%}
+
+                  </div>
+
+{% endfor %}
+      </div>
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+<!--JAVASCRIPT FOR SUBMIT BUTTON-->
+
+
+<script>
+    $('#error').hide()
+</script>
+
+{%if ratings['exist']==True%}
+<script>
+    if({{ratings['timeliness']}}<=50){
+        $('#timeliness_label').css('color','red')
+    }
+    else if({{ratings['timeliness']}}>=80){
+        $('#timeliness_label').css('color','green')
+    }
+
+
+    if({{ratings['honesty']}}<=50){
+        $('#honesty_label').css('color','red')
+    }
+    else if({{ratings['honesty']}}>=80){
+        $('#honesty_label').css('color','green')
+    }
+
+    if({{ratings['reliability']}}<=50){
+        $('#reliability_label').css('color','red')
+    }
+    else if({{ratings['reliability']}}>=80){
+        $('#reliability_label').css('color','green')
+    }
+</script>
+{%endif%}
+<script>
+    function submit_form()
+    {
+        var time = document.getElementById('timeliness').value
+        time = (time.trim().length == 0)
+
+        var rel = document.getElementById('reliability').value
+        rel = (rel.trim().length == 0)
+
+        var hon = document.getElementById('honesty').value
+        hon = (hon.trim().length == 0)
+
+        var com = document.getElementById('com').value
+        com = (com.trim().length == 0)
+
+        if(time==false && hon==false && rel==false && com==false)
+        {
+            document.review_form.submit();
+        }
+
+        else
+        {
+        $("#error").show()
+        }
+    }
+</script>
+
+
+{{footer|safe}}

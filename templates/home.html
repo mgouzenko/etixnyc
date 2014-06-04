@@ -1,0 +1,117 @@
+{{header|safe}}
+{{toolbar|safe}}
+{{searchbar|safe}}
+
+
+<!-- RECENT REVIEWS -->
+{%if True%}
+        <br><br><br>
+     <div class="container"><h3>Recent Reviews</h3><hr></div>
+{%for review in reviews%}
+     <div class="container well well-lg">
+           <div class="row">
+               <div class="col-md-12">
+                   <h4>
+                       <a href="/user?query={{review['reviewer_id']}}">
+                           {{review['reviewer_name']}} </a>
+                           reviewed
+                       <a href="/user?query={{review['reviewed_id']}}"> {{review['reviewed_name']}} </a>
+                   </h4>
+               </div>
+           </div>
+            <br>
+           <div class="row">
+                 <div class="col-md-3 col-sm-12 col-xs-12">
+                     <img class="review_icon img-rounded" src = http://graph.facebook.com/{{review['reviewer_id']}}/picture?type=large>
+
+                     <span class='glyphicon glyphicon-arrow-right' style="font-size:30px"></span>
+
+                     <img class="review_icon img-rounded" src = http://graph.facebook.com/{{review['reviewed_id']}}/picture?type=large>
+                 </div>
+
+
+
+                 <div class="col-md-3 col-sm-12 col-xs-12">
+                     <br>
+                     <p>Timeliness: {% for i in range(1+review['timeliness']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['timeliness']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                     <p>Honesty: &nbsp;&nbsp;&nbsp;{% for i in range(1+review['honesty']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['honesty']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                     <p>Reliability: &nbsp; {% for i in range(1+review['reliability']|int())%}
+                         <span class='glyphicon glyphicon-star'></span>
+                         {% endfor %}
+                         {% for i in range(4-review['reliability']|int())%}
+                         <span class='glyphicon glyphicon-star-empty'></span>
+                         {% endfor %}
+                     </p>
+                 </div>
+
+
+
+
+                 <div class="col-md-6 col-sm-12 col-xs-12">
+                 {%if review['com']%}
+                     <b>Comments:</b>
+                     <div class="panel panel-default commentframe">
+                        <div class="panel-body">
+                            {{review['com']}}
+                        </div>
+                     </div>
+                 {%endif%}
+                 </div>
+            </div>
+      <div class="row">
+         <div class="col-md-10"></div>
+
+         <div class="col-md-2">
+         <small>Date Added: {{review['created']}}</small>
+         </div>
+      </div>
+      </div>
+      <br>
+{% endfor %}
+{%endif%}
+
+
+
+<!--JAVASCRIPT FOR SUBMIT BUTTON-->
+<script>
+    $('#error').hide()
+</script>
+<script>
+    function submit_form()
+    {
+        var time = document.getElementById('timeliness').value
+        time = (time.trim().length == 0)
+
+        var rel = document.getElementById('reliability').value
+        rel = (rel.trim().length == 0)
+
+        var hon = document.getElementById('honesty').value
+        hon = (hon.trim().length == 0)
+
+        var com = document.getElementById('com').value
+        com = (com.trim().length == 0)
+
+        if(time==false && hon==false && rel==false && com==false)
+        {
+            document.review_form.submit();
+        }
+
+        else
+        {
+        $("#error").show()
+        }
+    }
+</script>
+{{footer|safe}}
