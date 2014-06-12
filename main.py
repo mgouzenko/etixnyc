@@ -15,7 +15,9 @@
 # limitations under the License.
 #
 
+import re
 import webapp2
+import ast
 import os
 import jinja2
 from google.appengine.ext import db
@@ -152,9 +154,9 @@ class Handler(webapp2.RequestHandler):
                 l = {'userid': userid, 'name': name, 'username': username}
                 return l
         except url.HTTPError, e:
-            self.write(e.fp.read())
-            self.write(username)
-            self.write(request_string)
+            #self.write(e.fp.read())
+            #self.write(username)
+            #self.write(request_string)
             return {'userid': "null", 'name': "null", 'username': "null"}
 
     def average_ratings(self, reviews):
@@ -220,21 +222,28 @@ class UserProfile(Handler):
             query = str(self.request.get("query"))
 
             username = query.strip("/")
-            query = query.split("/")
+            old_query = query.split("/")
+            query = []
+            for element in old_query:
+                if len(element)>0:
+                    query.append(element)
             reviews = self.get_reviews(123, 'arbitrary')
             reviews = reviews[0:8]
             does_query_exist = False
             ratings = {'exist': False}
             user_dict = {}
             if query:
-                for i in range(len(query)-1):
-                    if query[i] in ('www.facebook.com', 'facebook.com', 'facebook'):
-                        query = query[i+1]
-                        query = query.split("?")
+                for i in range(0, len(query)-2):
+                    logging.info(i)
+                    logging.info(query)
+                    logging.info(query[i])
+                    if query[i] in ['www.facebook.com', 'facebook.com', 'facebook']:
+                        new_query = query[i+1]
+                        new_query = new_query.split("?")
                         #will set the username if query was in the form of url
-                        username = query[0]
+                        username = new_query[0]
                         if username == 'profile.php':
-                            username = query[1]
+                            username = new_query[1]
                             username = username.split('&')
                             username = username[0].split('=')[1]
                 if username:
@@ -390,56 +399,101 @@ class Contact(Handler):
 
 class ScrapeFriends(Handler):
     def get(self):
+        #Check if we want to scrape this person right now
+        logging.info("Passed")
         token = self.request.get("token")
         id = self.request.get("id")
-        id_search = db.GqlQuery("SELECT * FROM Reviews WHERE reviewer_id= :str order by created desc", str=id)
+        id_search = db.GqlQuery("SELECT * FROM Users WHERE id= :str", str=id)
         last_scraped = datetime.datetime(2013,1,1)
-        old_entry = ""
+        old_entry = False
+        #Even though this is a for loop, there should really be just one person
         for person in id_search:
             last_scraped = person.friends_scraped
             key = person.key
             old_entry=person
         now = datetime.datetime.now()
         timedelta = now - last_scraped
-        if timedelta.total_seconds() > 259200:
+
+        #determine if we really want to scrape the person
+        if timedelta.total_seconds() > 0:
             request_string = 'https://graph.facebook.com/' + id + '/friends?access_token=' + token
-            logging.info(request_string)
             request = url.urlopen(request_string)
             request = request.read()
             json_obj = json.loads(request)
+            hashlist = {}
             while len(json_obj['data']) > 0:
                 friendlist = json_obj['data']
                 for friend in friendlist:
-                    entry = SearchBase(id=friend['id'],
-                                       name = friend['name']
-                                       )
-                    if entry:
-                        entry.put()
+                    hashlist[friend['name']]=friend['id']
                 next_pg = json_obj["paging"]["next"]
-                logging.info("next page:" + next_pg)
                 new_request = url.urlopen(next_pg)
                 new_request = new_request.read()
-                logging.info(new_request)
                 json_obj = json.loads(new_request)
-            logging.info('Search base updated')
-            #update friend scraped parameter
-            new_entry = Users(id = old_entry.id,
-                              name = old_entry.name,
-                              first_name = old_entry.first_name,
-                              last_name = old_entry.last_name,
-                              work = old_entry.work,
-                              education = old_entry.education,
-                              gender = old_entry.gender,
-                              timezone = old_entry.timezone,
-                              username = old_entry.username,
-                              friends_scraped = now,
-                              )
+
+            logging.info(hashlist)
+
+            #Assemble the total database
+            database = db.GqlQuery("SELECT * From SearchBase order by quantity asc")
+            database = database.fetch(None)
+            database_dict={}
+            to_append = {}
+            lowest_dict = {}
+            lowest_length = 100000000
+            lowest_key = False
 
             try:
-                new_entry.put()
-                db.delete(key)
+                lowest_entity = database[0]
+                lowest_key = lowest_entity.key
+                lowest_dict = lowest_entity.hashtable
+                lowest_dict = ast.literal_eval(lowest_dict)
+                lowest_length = lowest_entity.quantity
             except:
-                pass
+                logging.info("0 entities exist")
+
+            for entity in database:
+                entity_hashtable = ast.literal_eval(entity.hashtable)
+                for key in entity_hashtable:
+                    database_dict[key] = entity_hashtable[key]
+
+            #figure out what we need to append to our searchbase
+            for key in hashlist:
+                if key not in database_dict:
+                    to_append[key] = hashlist[key]
+
+            logging.info(to_append)
+
+            #figure out if we need to make a new entity (i.e. to_append is too big)
+            if len(to_append)+lowest_length > 30000:
+                logging.info("we fucked. len of toappend: " + str(len(to_append)) + "len of lowest: " + str(lowest_length) )
+                new_entity = SearchBase(hashtable=str(to_append), quantity=len(to_append))
+                new_entity.put()
+            else:
+                for key in to_append:
+                    lowest_dict[key] = to_append[key]
+                lowest_length = len(lowest_dict)
+                new_entity = SearchBase(hashtable=str(lowest_dict), quantity=lowest_length)
+                new_entity.put()
+                db.delete(lowest_entity)
+
+            logging.info('Search base updated')
+            #update friend scraped parameter
+            if old_entry:
+                try:
+                    new_entry = Users(id = old_entry.id,
+                                      name = old_entry.name,
+                                      first_name = old_entry.first_name,
+                                      last_name = old_entry.last_name,
+                                      work = old_entry.work,
+                                      education = old_entry.education,
+                                      gender = old_entry.gender,
+                                      timezone = old_entry.timezone,
+                                      username = old_entry.username,
+                                      friends_scraped = now,
+                                      )
+                    new_entry.put()
+                    db.delete(key)
+                except:
+                    pass
 
 
         else:
@@ -455,10 +509,80 @@ class Faq(Handler):
 
 class Search(Handler):
     def get(self):
-        access_token = self.request.cookies.get("access_token")
-        self.write(access_token)
+        query = self.request.get("q").lower()
+        querylist = query.split()
+        requerylist = []
+        for word in querylist:
+            requerylist.append(word.replace(" ","").replace("","+").strip("+")+"+")
+        regexobjs = []
+        for requery in requerylist:
+            regexobjs.append(re.compile(requery))
+        #query = self.request.get("q").lower().replace(" ","").replace("","+").strip("+")+"+"
+        #regex = re.compile(query)
+        for i in query:
+            if i=='/':
+                self.redirect('/user?query='+query)
+        database = db.GqlQuery("SELECT * From SearchBase order by quantity asc")
+        database = database.fetch(None)
+        search_results = []
+        for entity in database:
+                entity_hashtable = ast.literal_eval(entity.hashtable)
+                for key in entity_hashtable:
+                    name = key.lower().replace(" ","")
+                    result = {}
+                    hitlist = -1
+                    for regex in regexobjs:
+                        try:
+                            span = regex.search(name).span()
+                            hitlist += (span[1]-span[0])
+                            if span[0] == 0:
+                                hitlist += 100
+                        except:
+                            pass
+                    if hitlist>-1:
+                        result[key] = entity_hashtable[key]
+                        search_results.append({hitlist: result})
+
+        #sort the search results
+        sorted_results = []
+        while len(search_results) > 0:
+            max_hit = 0
+            max_index = 0
+            for i in range(0, len(search_results)-1):
+                for key in search_results[i]:
+                    if key> max_hit:
+                        max_hit = key
+                        max_index = i
+            sorted_results.append(search_results[max_index])
+            search_results.remove(search_results[max_index])
+
+        #clean the results
+        clean_results = []
+        for r in sorted_results:
+            for key in r:
+                clean_results.append(r[key])
+
+
+        #make toolbar
+        name=""
+        try:
+            name = self.request.cookies.get("first_name") + " "
+            name += self.request.cookies.get("last_name")
+        except:
+            self.redirect('/login')
+        toolbar = self.render_toolbar(name=name)
+
+        self.render("search.html",
+                    searchbar=self.searchbar,
+                    header=self.header,
+                    footer=self.footer,
+                    toolbar=toolbar,
+                    search_results=clean_results[0:9])
+
+        #access_token = self.request.cookies.get("access_token")
+        #self.write(access_token)
         '''
-        query = self.request.get("q")
+
         self.write(query)
         usernames = resources.usernames.usernames()
         results = {}
@@ -517,8 +641,8 @@ class Users(db.Model):
 
 
 class SearchBase(db.Model):
-    id = db.StringProperty(required=True)
-    name = db.StringProperty(required=True)
+    hashtable = db.TextProperty(required=True)
+    quantity = db.IntegerProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
 
 

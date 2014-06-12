@@ -27,3 +27,9 @@ indexes:
   - name: id
   - name: created
     direction: desc
+
+- kind: Users
+  properties:
+  - name: reviewer_id
+  - name: created
+    direction: desc

@@ -1,0 +1,26 @@
+{{header|safe}}
+{{toolbar|safe}}
+{{searchbar|safe}}
+<br><br><br>
+<div class="container">
+    {% for result in search_results %}
+    {% for key in result%}
+    <div class="row well well-lg">
+        <div class="col-md-2">
+            <img class="img img-rounded review_icon_lg" src="https://graph.facebook.com/{{result[key]}}/picture?type=large">
+        </div>
+        <div class="col-md-3">
+            <h4>{{key}}</h4> <p>ID: {{result[key]}}</p>
+            <form method="get" action="/user">
+                <button type="submit" class="btn btn-primary btn-lg">See Reviews</button>
+                <input type="hidden" value="{{result[key]}}" name="query">
+            </form>
+        </div>
+
+    </div>
+    <br>
+        {%endfor%}
+    {%endfor%}
+</div>
+
+{{footer|safe}}

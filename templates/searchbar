@@ -1,7 +1,7 @@
-<form action="/user" method="get">
+<form action="/search" method="get">
     <div class="input-group input-group-lg sticky">
          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span> </span>
-         <input type="text" name="query" class="form-control" placeholder="Paste link to seller's Facebook page.">
+         <input type="text" name="q" class="form-control" placeholder="Paste link to seller's Facebook page.">
          <span class="input-group-addon">
 
              <a href="" class="help" data-toggle="modal" data-target="#myModal1">
